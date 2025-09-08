@@ -12,12 +12,23 @@ st.set_page_config(
     page_title="CloudWise: AWS Cost Analyzer",
     layout="wide"
 )
+st.markdown(
+    """
+    <h1 style='text-align: center;
+               background: -webkit-linear-gradient(#1B263B, #FF9900);
+               -webkit-background-clip: text;
+               -webkit-text-fill-color: transparent;
+               font-weight: bold;'>
+        CloudWise AWS Cost Analyzer
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
+st.markdown(
+    "<h3 style='text-align: center; color: #1B263B;'>Smart insights into your AWS costs — upload & analyze instantly.</h3>",
+    unsafe_allow_html=True
+)
 
-st.title("CloudWise: AWS Cost Analyzer")
-st.markdown("""
-Upload your AWS billing CSV or use synthetic data to detect anomalies.
-Interactive charts visualize trends and highlight cost spikes.
-""")
 
 st.sidebar.header("Data Options")
 
@@ -62,6 +73,14 @@ else:
     report_df = explain_anomalies(report_df)
     st.subheader("Anomaly Report with Explanations")
     st.dataframe(report_df)
+    csv = report_df.to_csv(index=False).encode('utf-8')
+
+    st.download_button(
+        label="📥 Download Report as CSV",
+        data=csv,
+        file_name="cloudwise_anomaly_report.csv",
+        mime="text/csv"
+    )
 
 
 
@@ -96,6 +115,7 @@ fig.update_layout(
     xaxis_title="Date",
     yaxis_title="daily_cost",
     template="plotly_dark"  # optional
+    
 )
 
 st.plotly_chart(fig, use_container_width=True)
@@ -104,3 +124,4 @@ st.subheader("Service-wise Cost Breakdown 💰")
 service_df = service_breakdown(df)
 fig_bar = px.bar(service_df, x='service', y='cost', title="Total Cost by Service")
 st.plotly_chart(fig_bar, use_container_width=True)
+
